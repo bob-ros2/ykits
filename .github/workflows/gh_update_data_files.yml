@@ -1,0 +1,46 @@
+name: List Repo Folder and Save as JSON
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder:
+        description: 'Udate GitHub Pages data files'
+        required: true
+        default: ''
+
+jobs:
+  list_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v4
+
+    - name: Call GitHub API to list folder contents
+      id: list_folder
+      run: |
+        FOLDER="${{ github.event.inputs.folder }}"
+        [ -z "$FOLDER" ] && FOLDER="."
+        curl -s \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/contents/$FOLDER" \
+          > kits-contents.json
+
+    - name: Checkout gh_pages branch
+      uses: actions/checkout@v4
+      with:
+        ref: gh_pages
+        path: gh_pages
+
+    - name: Move JSON file to gh_pages branch
+      run: |      
+        mv kits-contents.json gh_pages/data/kits-contents.json
+
+    - name: Commit and push JSON file to gh_pages
+      run: |
+        cd gh_pages
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add kits-contents.json
+        git commit -m "Update kits-contents.json from ${{ github.event.inputs.folder }}"
+        git push origin gh_pages
