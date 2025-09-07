@@ -1,10 +1,10 @@
-name: List Repo Folder and Save as JSON
+name: Update Github Pages DB
 
 on:
   workflow_dispatch:
     inputs:
       folder:
-        description: 'Udate GitHub Pages data files'
+        description: 'Udate GitHub Pages DB data files'
         required: true
         default: ''
 
@@ -34,13 +34,13 @@ jobs:
 
     - name: Move JSON file to gh_pages branch
       run: |      
-        mv kits-contents.json gh_pages/data/kits-contents.json
+        mv kits-contents.json gh_pages/db/kits-contents.json
 
     - name: Commit and push JSON file to gh_pages
       run: |
         cd gh_pages
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add kits-contents.json
+        git add gh_pages/db/kits-contents.json
         git commit -m "Update kits-contents.json from ${{ github.event.inputs.folder }}"
         git push origin gh_pages
