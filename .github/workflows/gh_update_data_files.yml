@@ -34,7 +34,7 @@ jobs:
 
     - name: Move JSON file to gh_pages branch
       run: |      
-        mv kits-contents.json gh_pages/db/kits-contents.json
+        mv kits-contents.json gh_pages/gh_pages/db/kits-contents.json
 
     - name: Commit and push JSON file to gh_pages
       run: |
